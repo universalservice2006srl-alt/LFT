@@ -33,6 +33,7 @@ import type {
 import type {
   BranchDTO,
   DashboardStats,
+  LoginStats,
   LogRow,
   SessionUserDTO,
   VehicleOption,
@@ -52,6 +53,37 @@ export function scopeFor(user: SessionUserDTO): Scope {
   if (user.role === "branch_manager" && user.branchId)
     return { kind: "branch", branchId: user.branchId };
   return { kind: "driver", driverId: user.id };
+}
+
+export async function getLoginStats(): Promise<LoginStats> {
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+
+  const [branchRows, vehicleRows, userRows, logRows] = await Promise.all([
+    db.select({ count: sql<number>`count(*)::int` }).from(branches),
+    db.select({ count: sql<number>`count(*)::int` }).from(vehicles),
+    db
+      .select({
+        active: sql<number>`count(*) filter (where ${profiles.isActive})::int`,
+        activeToday: sql<number>`count(*) filter (where ${profiles.isActive} and ${profiles.lastLoginAt} >= ${startOfToday})::int`,
+      })
+      .from(profiles),
+    db.select({ count: sql<number>`count(*)::int` }).from(mileageLogs),
+  ]);
+
+  const branchesCount = branchRows[0]?.count ?? 0;
+  const vehiclesCount = vehicleRows[0]?.count ?? 0;
+  const activeUsers = userRows[0]?.active ?? 0;
+  const activeUsersToday = userRows[0]?.activeToday ?? 0;
+
+  return {
+    branches: branchesCount,
+    vehicles: vehiclesCount,
+    activeUsers,
+    logs: logRows[0]?.count ?? 0,
+    activeUsersToday,
+    activeUsersTodayPct: activeUsers > 0 ? Math.round((activeUsersToday / activeUsers) * 100) : 0,
+  };
 }
 
 /* ------------------------------------------------------------------ */

@@ -48,11 +48,11 @@ export function DashboardClient({
               : `Operational oversight for vehicles and drivers assigned to ${user.branchName}.`}
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-2xl border border-navy/10 bg-white/70 px-4 py-2.5 shadow-tactile">
+        <div className="flex w-full min-w-0 items-center gap-2 rounded-2xl border border-navy/10 bg-white/70 px-3.5 py-2.5 shadow-tactile sm:w-auto sm:px-4">
           <GaugeCircle className="h-4.5 w-4.5 text-green-deep" />
           <div>
             <p className="text-[10px] font-bold uppercase tracking-wider text-navy/45">Fleet efficiency</p>
-            <p className="font-mono text-sm font-bold text-navy">
+            <p className="truncate font-mono text-xs font-bold text-navy sm:text-sm">
               {stats.kpis.avgKmPerLiter ? `${stats.kpis.avgKmPerLiter.toFixed(2)} km/L` : "—"} · {fmtKm(stats.kpis.fleetKmMonth)} MTD
             </p>
           </div>
@@ -68,7 +68,7 @@ export function DashboardClient({
       <div className="grid min-w-0 gap-3 sm:gap-4 lg:grid-cols-2">
         <motion.div {...rise} transition={{ duration: 0.5, delay: 0.1 }} className="min-w-0">
           <Card className="min-w-0 overflow-hidden rounded-2xl sm:rounded-3xl">
-            <CardHeader className="flex-row items-center justify-between space-y-0 p-4 sm:p-6">
+            <CardHeader className="flex-row flex-wrap items-center justify-between gap-3 space-y-0 p-4 sm:flex-nowrap sm:p-6">
               <div>
                 <CardTitle>Monthly kilometres</CardTitle>
                 <p className="mt-0.5 text-xs text-ink-soft">
@@ -87,7 +87,7 @@ export function DashboardClient({
 
         <motion.div {...rise} transition={{ duration: 0.5, delay: 0.14 }} className="min-w-0">
           <Card className="min-w-0 overflow-hidden rounded-2xl sm:rounded-3xl">
-            <CardHeader className="flex-row items-center justify-between space-y-0 p-4 sm:p-6">
+            <CardHeader className="flex-row flex-wrap items-center justify-between gap-3 space-y-0 p-4 sm:flex-nowrap sm:p-6">
               <div>
                 <CardTitle>Fuel efficiency trend</CardTitle>
                 <p className="mt-0.5 text-xs text-ink-soft">Fleet-wide km per litre, monthly</p>
@@ -104,7 +104,7 @@ export function DashboardClient({
 
         <motion.div {...rise} transition={{ duration: 0.5, delay: 0.18 }} className="min-w-0">
           <Card className="min-w-0 overflow-hidden rounded-2xl sm:rounded-3xl">
-            <CardHeader className="flex-row items-center justify-between space-y-0 p-4 sm:p-6">
+            <CardHeader className="flex-row flex-wrap items-center justify-between gap-3 space-y-0 p-4 sm:flex-nowrap sm:p-6">
               <div>
                 <CardTitle>Fuel spend · current month</CardTitle>
                 <p className="mt-0.5 text-xs text-ink-soft">{isAdmin ? "Per branch office" : "Per driver"}</p>

@@ -60,6 +60,15 @@ export type LogRow = {
 
 export type BranchDTO = { id: string; name: string; code: string };
 
+export type LoginStats = {
+  branches: number;
+  vehicles: number;
+  activeUsers: number;
+  logs: number;
+  activeUsersToday: number;
+  activeUsersTodayPct: number;
+};
+
 export type DashboardStats = {
   kpis: {
     activeFleet: number;

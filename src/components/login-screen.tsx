@@ -22,15 +22,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { authFetch } from "@/lib/session-client";
+import type { LoginStats } from "@/lib/types";
 
 export type DemoHint = { role: string; email: string; password: string | null };
 
-type LoginStats = {
-  branches: number;
-  vehicles: number;
-  activeUsers: number;
-  logs: number;
-};
+const MARQUEE_LABELS = [
+  "branch offices",
+  "fleet vehicles",
+  "active users",
+  "mileage logs",
+  "Live fleet analytics",
+  "Temporary-driver auditing",
+];
 
 export function LoginScreen({ demo, stats }: { demo: DemoHint[]; stats: LoginStats }) {
   const [email, setEmail] = useState("");
@@ -40,12 +43,11 @@ export function LoginScreen({ demo, stats }: { demo: DemoHint[]; stats: LoginSta
   const [error, setError] = useState<string | null>(null);
   const [launching, setLaunching] = useState<string | null>(null);
   const marquee = [
-    `${stats.branches} branch offices`,
-    `${stats.vehicles} fleet vehicles`,
-    `${stats.activeUsers} active users`,
-    `${stats.logs.toLocaleString()} mileage logs`,
-    "Live fleet analytics",
-    "Temporary-driver auditing",
+    `${stats.branches} ${MARQUEE_LABELS[0]}`,
+    `${stats.vehicles} ${MARQUEE_LABELS[1]}`,
+    `${stats.activeUsers} ${MARQUEE_LABELS[2]}`,
+    `${stats.logs.toLocaleString()} ${MARQUEE_LABELS[3]}`,
+    ...MARQUEE_LABELS.slice(4),
   ];
 
   async function signIn(e?: React.FormEvent) {
@@ -78,9 +80,9 @@ export function LoginScreen({ demo, stats }: { demo: DemoHint[]; stats: LoginSta
   }
 
   return (
-    <div className="min-h-dvh overflow-x-clip bg-cream lg:grid lg:h-dvh lg:grid-cols-[1.05fr_1fr]">
+    <div className="min-h-dvh overflow-x-hidden bg-cream lg:grid lg:h-dvh lg:grid-cols-[1.05fr_1fr] lg:overflow-hidden">
       {/* ---------------------------- Brand panel ---------------------------- */}
-      <section className="relative flex min-h-[32rem] flex-col overflow-hidden bg-navy text-cream lg:max-h-dvh lg:min-h-0 lg:overflow-y-auto">
+      <section className="relative flex flex-col overflow-hidden bg-navy text-cream lg:min-h-0">
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.35]"
           style={{
@@ -124,7 +126,7 @@ export function LoginScreen({ demo, stats }: { demo: DemoHint[]; stats: LoginSta
           </div>
         </header>
 
-        <div className="relative z-10 flex flex-1 flex-col justify-center px-5 pb-5 sm:px-8 sm:pb-8 lg:px-10 lg:pb-10">
+        <div className="relative z-10 flex flex-1 flex-col justify-center px-5 pb-6 sm:px-8 sm:pb-8 lg:px-10 lg:pb-10">
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
@@ -162,7 +164,7 @@ export function LoginScreen({ demo, stats }: { demo: DemoHint[]; stats: LoginSta
             <div className="absolute bottom-4 left-5 right-5 flex items-end justify-between">
               <div>
                 <p className="text-[11px] uppercase tracking-[0.2em] text-cream/60">Fleet readiness</p>
-                <p className="font-display text-2xl font-bold">94% active today</p>
+                <p className="font-display text-2xl font-bold">{stats.activeUsersTodayPct}% users active today</p>
               </div>
               <span className="flex items-center gap-1.5 rounded-full bg-green px-3 py-1 text-xs font-bold text-navy">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-navy" />
@@ -185,8 +187,8 @@ export function LoginScreen({ demo, stats }: { demo: DemoHint[]; stats: LoginSta
       </section>
 
       {/* ---------------------------- Sign-in panel ---------------------------- */}
-      <section className="min-h-0 overflow-y-auto bg-white lg:max-h-dvh">
-        <div className="mx-auto flex w-full max-w-md flex-col justify-start px-4 py-6 sm:px-6 sm:py-8 lg:min-h-full lg:justify-center lg:py-6">
+      <section className="min-h-0 overflow-y-auto bg-white">
+        <div className="mx-auto flex w-full max-w-md flex-col justify-start px-4 py-6 sm:px-6 sm:py-8 lg:min-h-full lg:justify-center lg:py-8">
           <Image
             src="/images/fleet_logo1.png"
             alt="Lyca Fleet Tracker"

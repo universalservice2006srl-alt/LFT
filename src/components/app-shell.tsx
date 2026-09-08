@@ -139,7 +139,7 @@ export function AppShell({ user, children }: { user: SessionUserDTO; children: R
 
       {/* ------------------------ Mobile top bar ------------------------ */}
       <header className="safe-top sticky top-0 z-40 border-b border-navy/8 bg-cream/92 backdrop-blur-xl lg:hidden">
-        <div className="flex h-15 items-center justify-between gap-3 px-3.5">
+        <div className="flex h-15 min-w-0 items-center justify-between gap-2 px-3 sm:gap-3 sm:px-3.5">
           <Link
             href={link(user.role === "driver" ? "/drive" : "/dashboard")}
             className="flex min-w-0 items-center gap-2.5 rounded-xl py-1"
@@ -153,8 +153,8 @@ export function AppShell({ user, children }: { user: SessionUserDTO; children: R
                 className="h-full w-full rounded-xl object-cover"
               />
             </span>
-            <span className="min-w-0">
-              <span className="block font-display text-[15px] font-bold leading-none tracking-tight">
+            <span className="min-w-0 max-w-[calc(100vw-9rem)]">
+              <span className="block truncate font-display text-[15px] font-bold leading-none tracking-tight">
                 Lyca Fleet Tracker
               </span>
               <span className="mt-1 block truncate text-[9px] font-bold uppercase tracking-[0.14em] text-navy/45">
@@ -191,7 +191,7 @@ export function AppShell({ user, children }: { user: SessionUserDTO; children: R
       </header>
 
       {/* ------------------------ Content ------------------------ */}
-      <main className="min-w-0 pb-[calc(5.25rem+env(safe-area-inset-bottom))] lg:pb-10 lg:pl-64">
+      <main className="min-w-0 overflow-x-hidden pb-[calc(5.25rem+env(safe-area-inset-bottom))] lg:pb-10 lg:pl-64">
         <div className="mx-auto w-full min-w-0 max-w-7xl px-3.5 py-4 sm:px-6 sm:py-5 lg:px-9 lg:py-8">
           {children}
         </div>
@@ -199,7 +199,7 @@ export function AppShell({ user, children }: { user: SessionUserDTO; children: R
 
       {/* ------------------------ Mobile bottom nav ------------------------ */}
       <nav className="safe-bottom fixed inset-x-0 bottom-0 z-50 border-t border-navy/10 bg-cream/95 shadow-[0_-8px_30px_-18px_rgba(33,38,78,0.45)] backdrop-blur-xl lg:hidden">
-        <div className="no-scrollbar mx-auto grid h-17 w-full max-w-2xl grid-flow-col auto-cols-fr items-stretch px-1">
+        <div className="no-scrollbar mx-auto flex h-17 max-w-2xl items-stretch overflow-x-auto px-1 sm:px-2">
           {nav.map((item) => {
             const active = isActive(item.href);
             return (
@@ -208,7 +208,7 @@ export function AppShell({ user, children }: { user: SessionUserDTO; children: R
                 href={link(item.href)}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl px-0.5 text-[9px] font-bold leading-none transition-colors active:bg-navy/5",
+                  "relative flex min-w-[52px] flex-1 shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl px-0.5 text-[9px] font-bold leading-none transition-colors active:bg-navy/5",
                   active ? "text-blue" : "text-navy/45"
                 )}
               >
