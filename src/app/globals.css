@@ -1,0 +1,137 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme {
+  /* Brand palette */
+  --color-navy: #21264e;
+  --color-navy-2: #2b3160;
+  --color-navy-3: #3d4478;
+  --color-cream: #fff7f2;
+  --color-mist: #f3e7de;
+  --color-blue: #245bc1;
+  --color-green: #08dc7d;
+  --color-green-deep: #06b465;
+  --color-peach: #ffc8b2;
+  --color-yellow: #ffdd64;
+  --color-cyan: #00d7ff;
+  --color-purple: #46286e;
+  --color-ink-soft: #585d8f;
+  --color-red: #e5484d;
+
+  /* Typography */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-space), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex), ui-monospace, "SFMono-Regular", monospace;
+
+  --animate-marquee: marquee 28s linear infinite;
+  --animate-dash: dash 6s linear infinite;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes dash {
+  to { stroke-dashoffset: -240; }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  background-color: var(--color-cream);
+  color: var(--color-navy);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+/* Prevent iOS from zooming the page when a form field receives focus. */
+@media (max-width: 767px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  button,
+  a,
+  [role="button"] {
+    touch-action: manipulation;
+  }
+}
+
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+::selection {
+  background: var(--color-yellow);
+  color: var(--color-navy);
+}
+
+/* Slim scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(33, 38, 78, 0.25) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(33, 38, 78, 0.22);
+  border-radius: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Hide native number-input spinners */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* Tactile card shadow */
+.shadow-tactile {
+  box-shadow:
+    0 1px 0 rgba(33, 38, 78, 0.04),
+    0 8px 24px -12px rgba(33, 38, 78, 0.18);
+}
+.shadow-lift {
+  box-shadow:
+    0 2px 0 rgba(33, 38, 78, 0.05),
+    0 20px 44px -20px rgba(33, 38, 78, 0.35);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Dotted route line used on auth screen */
+.route-line {
+  stroke-dasharray: 4 14;
+  animation: dash 8s linear infinite;
+}
