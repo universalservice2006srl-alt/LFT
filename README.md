@@ -13,6 +13,8 @@ The application keeps its existing database role values for compatibility:
 2. Open **Project Settings > Database** and copy the **Session pooler** connection string. Use the pooler string for Vercel, with its password URL-encoded if it contains special characters.
 3. Open **SQL Editor**, paste `docs/supabase-rls.sql`, and run it once.
 
+For Vercel, use the Supabase **Session pooler** `DATABASE_URL`, not the direct `db.<project>.supabase.co` host. URL-encode special characters in the database password.
+
 The application uses Supabase Auth for all admin and user passwords and sessions. Set the public project URL and anon key for the browser/SSR client, and set the service-role key only as a server-side Vercel secret. Never expose either the database URL or service-role key to the browser.
 
 ### 2. Create the first admin
