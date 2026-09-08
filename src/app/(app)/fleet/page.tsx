@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { asc, eq } from "drizzle-orm";
+import { asc, eq, inArray } from "drizzle-orm";
 import { db } from "@/db";
 import { profiles } from "@/db/schema";
 import { getSessionUser, getSParam, withS } from "@/lib/auth";
@@ -25,7 +25,7 @@ export default async function FleetPage({
       ? db
           .select({ id: profiles.id, fullName: profiles.fullName, branchId: profiles.branchId })
           .from(profiles)
-          .where(eq(profiles.role, "driver"))
+          .where(inArray(profiles.role, ["driver", "branch_manager"]))
           .orderBy(asc(profiles.fullName))
       : Promise.resolve([]),
   ]);
