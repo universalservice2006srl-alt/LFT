@@ -26,8 +26,8 @@ export const metadata: Metadata = {
   description:
     "Lyca fleet and mileage tracking.",
   icons: {
-    icon: "https://cms-assets.ldsvcplatform.com/IT/s3fs-public/2023-09/MicrosoftTeams-image%20%2813%29.png",
-    shortcut: "https://cms-assets.ldsvcplatform.com/IT/s3fs-public/2023-09/MicrosoftTeams-image%20%2813%29.png",
+    icon: "/images/app-icon.png",
+    shortcut: "/images/app-icon.png",
   },
 };
 

@@ -100,7 +100,13 @@ export function LoginScreen({ demo }: { demo: DemoHint[] }) {
 
         <header className="safe-top relative z-10 flex items-center gap-2.5 px-5 pb-3 pt-4 sm:gap-3 sm:p-8 lg:p-10">
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-cream text-navy shadow-lift sm:h-11 sm:w-11 sm:rounded-2xl">
-            <Gauge className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.4} />
+              <Image
+                src="/images/app-icon.png"
+                alt="Lyca Fleet Tracker"
+                width={44}
+                height={44}
+                className="h-full w-full rounded-xl object-cover"
+              />
           </span>
           <div>
             <p className="font-display text-base font-bold leading-none tracking-tight sm:text-lg">
@@ -139,11 +145,11 @@ export function LoginScreen({ demo }: { demo: DemoHint[] }) {
             className="relative mt-10 hidden max-w-md overflow-hidden rounded-3xl border border-cream/15 shadow-lift lg:block"
           >
             <Image
-              src="https://cms-assets.ldsvcplatform.com/IT/s3fs-public/2023-09/MicrosoftTeams-image%20%2813%29.png"
-              alt="Lyca Mobile fleet vehicle"
+              src="/images/skoda.png"
+              alt="Lyca Mobile Skoda fleet vehicle"
               width={640}
               height={420}
-              className="h-56 w-full object-cover"
+              className="h-56 w-full object-contain"
               priority
             />
             <div className="absolute inset-0 bg-gradient-to-t from-navy/85 via-transparent to-transparent" />
@@ -334,7 +340,13 @@ export function LoginScreen({ demo }: { demo: DemoHint[] }) {
               transition={{ type: "spring", stiffness: 260, damping: 18 }}
               className="flex h-20 w-20 items-center justify-center rounded-3xl bg-green text-navy shadow-lift"
             >
-              <Gauge className="h-10 w-10" strokeWidth={2.4} />
+              <Image
+                src="/images/app-icon.png"
+                alt="Lyca Fleet Tracker"
+                width={80}
+                height={80}
+                className="h-full w-full rounded-3xl object-cover"
+              />
             </motion.span>
             <motion.p
               initial={{ opacity: 0, y: 10 }}

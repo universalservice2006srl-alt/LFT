@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
   CarFront,
   ClipboardCheck,
-  Gauge,
   LayoutDashboard,
   LogOut,
   PenLine,
@@ -73,7 +73,13 @@ export function AppShell({ user, children }: { user: SessionUserDTO; children: R
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col bg-navy text-cream lg:flex">
         <Link href={link(user.role === "driver" ? "/drive" : "/dashboard")} className="flex items-center gap-3 px-6 pt-7 pb-8">
           <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-cream text-navy shadow-lift">
-            <Gauge className="h-5.5 w-5.5" strokeWidth={2.4} />
+            <Image
+              src="/images/app-icon.png"
+              alt="Lyca Fleet Tracker"
+              width={44}
+              height={44}
+              className="h-full w-full rounded-xl object-cover"
+            />
           </span>
           <span>
             <span className="block font-display text-[17px] font-bold leading-none tracking-tight">
@@ -139,7 +145,13 @@ export function AppShell({ user, children }: { user: SessionUserDTO; children: R
             className="flex min-w-0 items-center gap-2.5 rounded-xl py-1"
           >
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-navy text-cream shadow-tactile">
-              <Gauge className="h-5 w-5" strokeWidth={2.4} />
+              <Image
+                src="/images/app-icon.png"
+                alt="Lyca Fleet Tracker"
+                width={36}
+                height={36}
+                className="h-full w-full rounded-xl object-cover"
+              />
             </span>
             <span className="min-w-0">
               <span className="block font-display text-[15px] font-bold leading-none tracking-tight">
