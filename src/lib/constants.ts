@@ -1,5 +1,5 @@
-export const APP_NAME = "FleetPulse";
-export const COMPANY = "Meridian Group";
+export const APP_NAME = "Lyca Fleet Tracker";
+export const COMPANY = "Lyca Mobile";
 
 /**
  * Feature switches.

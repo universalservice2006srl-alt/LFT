@@ -77,10 +77,10 @@ export function AppShell({ user, children }: { user: SessionUserDTO; children: R
           </span>
           <span>
             <span className="block font-display text-[17px] font-bold leading-none tracking-tight">
-              FleetPulse
+              Lyca Fleet Tracker
             </span>
             <span className="mt-1 block text-[10px] uppercase tracking-[0.22em] text-cream/50">
-              Meridian Group
+              Lyca Mobile
             </span>
           </span>
         </Link>
@@ -143,7 +143,7 @@ export function AppShell({ user, children }: { user: SessionUserDTO; children: R
             </span>
             <span className="min-w-0">
               <span className="block font-display text-[15px] font-bold leading-none tracking-tight">
-                FleetPulse
+                Lyca Fleet Tracker
               </span>
               <span className="mt-1 block truncate text-[9px] font-bold uppercase tracking-[0.14em] text-navy/45">
                 {user.branchName ?? "Fleet management"}

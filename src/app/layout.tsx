@@ -22,9 +22,13 @@ const plex = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FleetPulse · Meridian Group Fleet OS",
+  title: "Lyca Fleet Tracker",
   description:
-    "Corporate fleet & mileage tracking — fast driver logging, branch oversight and company-wide analytics.",
+    "Lyca fleet and mileage tracking.",
+  icons: {
+    icon: "https://cms-assets.ldsvcplatform.com/IT/s3fs-public/2023-09/MicrosoftTeams-image%20%2813%29.png",
+    shortcut: "https://cms-assets.ldsvcplatform.com/IT/s3fs-public/2023-09/MicrosoftTeams-image%20%2813%29.png",
+  },
 };
 
 export const viewport: Viewport = {
@@ -39,7 +43,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${inter.variable} ${space.variable} ${plex.variable}`}>
-      <body className="font-sans min-h-dvh bg-cream text-navy">{children}</body>
+      <body className="font-sans min-h-dvh overflow-y-auto bg-cream text-navy">{children}</body>
     </html>
   );
 }

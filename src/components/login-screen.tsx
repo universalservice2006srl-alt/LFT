@@ -72,9 +72,9 @@ export function LoginScreen({ demo }: { demo: DemoHint[] }) {
   }
 
   return (
-    <div className="min-h-dvh bg-cream lg:grid lg:grid-cols-[1.05fr_1fr]">
+    <div className="min-h-dvh bg-cream lg:grid lg:h-dvh lg:grid-cols-[1.05fr_1fr] lg:overflow-hidden">
       {/* ---------------------------- Brand panel ---------------------------- */}
-      <section className="relative flex max-h-[248px] flex-col overflow-hidden bg-navy text-cream sm:max-h-[330px] lg:max-h-none lg:min-h-dvh">
+      <section className="relative flex flex-col overflow-hidden bg-navy text-cream lg:min-h-0">
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.35]"
           style={{
@@ -104,10 +104,10 @@ export function LoginScreen({ demo }: { demo: DemoHint[] }) {
           </span>
           <div>
             <p className="font-display text-base font-bold leading-none tracking-tight sm:text-lg">
-              FleetPulse
+              Lyca Fleet Tracker
             </p>
             <p className="mt-1 text-[10px] uppercase tracking-[0.22em] text-cream/50 sm:text-[11px]">
-              Meridian Group
+              Lyca Mobile
             </p>
           </div>
         </header>
@@ -127,8 +127,8 @@ export function LoginScreen({ demo }: { demo: DemoHint[] }) {
               <span className="text-peach">accounted for.</span>
             </h1>
             <p className="mt-3 hidden max-w-md text-[15px] leading-relaxed text-cream/65 sm:block lg:mt-5">
-              One-tap driver logging, branch-level oversight and company-wide fuel
-              intelligence — built for the 53 people who keep Meridian moving.
+              Fast driver logging, branch-level oversight and clear fleet intelligence
+              for every Lyca Mobile journey.
             </p>
           </motion.div>
 
@@ -139,8 +139,8 @@ export function LoginScreen({ demo }: { demo: DemoHint[] }) {
             className="relative mt-10 hidden max-w-md overflow-hidden rounded-3xl border border-cream/15 shadow-lift lg:block"
           >
             <Image
-              src="/images/fleet-hero.jpg"
-              alt="Meridian Group fleet"
+              src="https://cms-assets.ldsvcplatform.com/IT/s3fs-public/2023-09/MicrosoftTeams-image%20%2813%29.png"
+              alt="Lyca Mobile fleet vehicle"
               width={640}
               height={420}
               className="h-56 w-full object-cover"
@@ -213,7 +213,7 @@ export function LoginScreen({ demo }: { demo: DemoHint[] }) {
                   spellCheck={false}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="name@meridian-group.it"
+                  placeholder="name@lycamobile.it"
                   className="h-12 rounded-xl bg-white pl-10 shadow-tactile"
                   required
                 />

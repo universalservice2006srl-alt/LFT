@@ -1,5 +1,5 @@
 /**
- * FleetPulse — deterministic database seed.
+ * Lyca Fleet Tracker — deterministic database seed.
  * Run with: npx tsx src/db/seed.ts
  */
 import { db } from "./index";

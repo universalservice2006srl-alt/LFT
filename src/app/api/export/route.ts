@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
     return new NextResponse(html, {
       headers: {
         "Content-Type": "application/vnd.ms-excel; charset=utf-8",
-        "Content-Disposition": `attachment; filename="fleetpulse-mileage-${stamp}.xls"`,
+        "Content-Disposition": `attachment; filename="lyca-fleet-mileage-${stamp}.xls"`,
       },
     });
   }
@@ -108,7 +108,7 @@ export async function GET(request: NextRequest) {
   return new NextResponse(lines.join("\n"), {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="fleetpulse-mileage-${stamp}.csv"`,
+      "Content-Disposition": `attachment; filename="lyca-fleet-mileage-${stamp}.csv"`,
     },
   });
 }

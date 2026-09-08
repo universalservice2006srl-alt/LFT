@@ -44,7 +44,7 @@ export function DashboardClient({
           </h1>
           <p className="mt-1.5 max-w-xl text-[13px] leading-relaxed text-ink-soft sm:mt-2 sm:text-sm">
             {isAdmin
-              ? "Live fleet activity, fuel economics and temporary-driver auditing across Meridian Group."
+              ? "Live fleet activity, fuel economics and temporary-driver auditing across Lyca Mobile."
               : `Operational oversight for vehicles and drivers assigned to ${user.branchName}.`}
           </p>
         </div>

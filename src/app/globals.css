@@ -51,7 +51,7 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   -webkit-tap-highlight-color: transparent;
-  overscroll-behavior-y: none;
+  overflow-y: auto;
 }
 
 /* Prevent iOS from zooming the page when a form field receives focus. */

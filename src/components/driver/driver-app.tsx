@@ -704,7 +704,7 @@ export function DriverApp({
                   ? "The odometer reading conflicts with fleet records. Your manager has been notified."
                   : success.temporary
                     ? "Recorded as temporary usage — visible to your branch manager for audit."
-                    : "Synced to FleetPulse. Safe driving out there."}
+                    : "Synced to Lyca Fleet Tracker. Safe driving out there."}
               </p>
             </motion.div>
           </motion.div>
