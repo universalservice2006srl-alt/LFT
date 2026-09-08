@@ -179,14 +179,14 @@ export function LoginScreen({ demo }: { demo: DemoHint[] }) {
       </section>
 
       {/* ---------------------------- Sign-in panel ---------------------------- */}
-      <section className="flex flex-col bg-white">
-        <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-4 py-7 sm:px-6 sm:py-10 lg:py-14">
+      <section className="min-h-0 overflow-y-auto bg-white">
+        <div className="mx-auto flex w-full max-w-md flex-col justify-start px-4 py-6 sm:px-6 sm:py-8 lg:min-h-full lg:justify-center lg:py-8">
           <Image
             src="/images/fleet_logo1.png"
             alt="Lyca Fleet Tracker"
             width={420}
             height={160}
-            className="mb-8 h-auto w-full max-w-[260px] object-contain sm:mb-10"
+            className="mb-5 h-auto w-full max-w-[220px] object-contain sm:mb-6"
             priority
           />
           <motion.div
@@ -212,7 +212,7 @@ export function LoginScreen({ demo }: { demo: DemoHint[] }) {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.12 }}
-            className="mt-5 space-y-3.5"
+            className="mt-4 space-y-3 lg:mt-5 lg:space-y-3.5"
           >
             <div>
               <Label htmlFor="email">Work email</Label>
