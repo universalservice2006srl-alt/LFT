@@ -217,21 +217,21 @@ export function FleetClient({
   const driversForBranch = drivers.filter((d) => d.branchId === form.branchId);
 
   return (
-    <div className="space-y-5">
+    <div className="min-w-0 space-y-5">
       {/* Header */}
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.22em] text-navy/45">
+        <div className="min-w-0">
+          <p className="flex min-w-0 items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-navy/45 sm:tracking-[0.22em]">
             <CarFront className="h-3.5 w-3.5" /> Vehicle registry
           </p>
-          <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-navy">Fleet</h1>
+          <h1 className="mt-2 font-display text-[clamp(1.75rem,8vw,1.875rem)] font-bold tracking-tight text-navy">Fleet</h1>
           <p className="mt-1 text-sm text-ink-soft">
             {filtered.length} of {fleet.length} vehicles
             {!isAdmin && user.branchName ? ` · ${user.branchName} branch (read-only)` : ""}
           </p>
         </div>
         {isAdmin && (
-          <Button onClick={() => setAddOpen(true)}>
+          <Button className="w-full sm:w-auto" onClick={() => setAddOpen(true)}>
             <Plus className="h-4 w-4" /> Register vehicle
           </Button>
         )}
@@ -283,36 +283,36 @@ export function FleetClient({
           const st = STATUS_META[v.status];
           const kmL = f.litersMonth > 0 ? f.kmMonth / f.litersMonth : null;
           return (
-            <Card key={v.id} className="group relative overflow-hidden p-5 transition-all hover:shadow-lift">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <p className="font-mono text-xl font-bold tracking-wider text-navy">{v.plateNumber}</p>
-                  <p className="mt-0.5 text-sm text-ink-soft">
+            <Card key={v.id} className="group relative min-w-0 overflow-hidden p-3.5 transition-all hover:shadow-lift sm:p-5">
+              <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="truncate font-mono text-lg font-bold tracking-wider text-navy sm:text-xl">{v.plateNumber}</p>
+                  <p className="mt-0.5 truncate text-sm text-ink-soft">
                     {v.make} {v.model} · {v.year} · {v.fuelType}
                   </p>
                 </div>
-                <span className={cn("rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider", st.cls)}>
+                <span className={cn("shrink-0 rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider", st.cls)}>
                   {v.status === "maintenance" ? <Wrench className="mr-1 inline h-3 w-3" /> : null}
                   {st.label}
                 </span>
               </div>
 
-              <div className="mt-4 grid grid-cols-3 gap-2 rounded-2xl bg-cream p-3 text-center">
-                <div>
-                  <p className="font-mono text-[15px] font-bold text-navy">{fmtNumber(v.currentOdometer)}</p>
+              <div className="mt-4 grid min-w-0 grid-cols-3 gap-1.5 rounded-2xl bg-cream p-2.5 text-center sm:gap-2 sm:p-3">
+                <div className="min-w-0">
+                  <p className="truncate font-mono text-[13px] font-bold text-navy sm:text-[15px]">{fmtNumber(v.currentOdometer)}</p>
                   <p className="text-[10px] font-bold uppercase tracking-wider text-navy/40">Odometer</p>
                 </div>
-                <div>
-                  <p className="font-mono text-[15px] font-bold text-navy">{fmtNumber(f.kmMonth)}</p>
+                <div className="min-w-0">
+                  <p className="truncate font-mono text-[13px] font-bold text-navy sm:text-[15px]">{fmtNumber(f.kmMonth)}</p>
                   <p className="text-[10px] font-bold uppercase tracking-wider text-navy/40">Km · month</p>
                 </div>
-                <div>
-                  <p className="font-mono text-[15px] font-bold text-navy">{kmL ? kmL.toFixed(1) : "—"}</p>
+                <div className="min-w-0">
+                  <p className="truncate font-mono text-[13px] font-bold text-navy sm:text-[15px]">{kmL ? kmL.toFixed(1) : "—"}</p>
                   <p className="text-[10px] font-bold uppercase tracking-wider text-navy/40">km/L</p>
                 </div>
               </div>
 
-              <div className="mt-4 flex items-center justify-between gap-2">
+              <div className="mt-4 flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div className="min-w-0">
                   <p className="text-[10px] font-bold uppercase tracking-wider text-navy/40">Primary driver</p>
                   {isAdmin ? (
@@ -321,7 +321,7 @@ export function FleetClient({
                       onValueChange={(val) => patchVehicle(v.id, { primaryDriverId: val === "none" ? null : val })}
                       disabled={rowBusy === v.id}
                     >
-                      <SelectTrigger className="mt-1 h-9 border-navy/10 text-[13px]">
+                      <SelectTrigger className="mt-1 h-9 w-full border-navy/10 text-[13px] sm:w-auto sm:min-w-36">
                         <SelectValue placeholder="Unassigned" />
                       </SelectTrigger>
                       <SelectContent>
@@ -344,7 +344,7 @@ export function FleetClient({
                 {isAdmin && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm" disabled={rowBusy === v.id} className="shrink-0">
+                      <Button variant="outline" size="sm" disabled={rowBusy === v.id} className="w-full shrink-0 sm:w-auto">
                         {rowBusy === v.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Manage"}
                       </Button>
                     </DropdownMenuTrigger>
