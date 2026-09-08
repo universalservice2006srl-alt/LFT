@@ -74,7 +74,7 @@ export function AppShell({ user, children }: { user: SessionUserDTO; children: R
         <Link href={link(user.role === "driver" ? "/drive" : "/dashboard")} className="flex items-center gap-3 px-6 pt-7 pb-8">
           <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-cream text-navy shadow-lift">
             <Image
-              src="/images/app-icon.png"
+              src="/images/app-icon.jpg"
               alt="Lyca Fleet Tracker"
               width={44}
               height={44}
@@ -146,7 +146,7 @@ export function AppShell({ user, children }: { user: SessionUserDTO; children: R
           >
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-navy text-cream shadow-tactile">
               <Image
-                src="/images/app-icon.png"
+                src="/images/app-icon.jpg"
                 alt="Lyca Fleet Tracker"
                 width={36}
                 height={36}

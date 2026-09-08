@@ -74,9 +74,9 @@ export function LoginScreen({ demo }: { demo: DemoHint[] }) {
   return (
     <div className="min-h-dvh bg-cream lg:grid lg:h-dvh lg:grid-cols-[1.05fr_1fr] lg:overflow-hidden">
       {/* ---------------------------- Brand panel ---------------------------- */}
-      <section className="relative flex flex-col overflow-hidden bg-navy text-cream lg:min-h-0">
+      <section className="relative flex flex-col overflow-hidden bg-white text-navy lg:min-h-0">
         <div
-          className="pointer-events-none absolute inset-0 opacity-[0.35]"
+          className="pointer-events-none absolute inset-0 opacity-[0.12]"
           style={{
             backgroundImage:
               "radial-gradient(circle at 20% 10%, rgba(8,220,125,0.16), transparent 42%), radial-gradient(circle at 85% 80%, rgba(36,91,193,0.35), transparent 46%)",
@@ -101,7 +101,7 @@ export function LoginScreen({ demo }: { demo: DemoHint[] }) {
         <header className="safe-top relative z-10 flex items-center gap-2.5 px-5 pb-3 pt-4 sm:gap-3 sm:p-8 lg:p-10">
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-cream text-navy shadow-lift sm:h-11 sm:w-11 sm:rounded-2xl">
               <Image
-                src="/images/app-icon.png"
+                src="/images/app-icon.jpg"
                 alt="Lyca Fleet Tracker"
                 width={44}
                 height={44}
@@ -112,7 +112,7 @@ export function LoginScreen({ demo }: { demo: DemoHint[] }) {
             <p className="font-display text-base font-bold leading-none tracking-tight sm:text-lg">
               Lyca Fleet Tracker
             </p>
-            <p className="mt-1 text-[10px] uppercase tracking-[0.22em] text-cream/50 sm:text-[11px]">
+            <p className="mt-1 text-[10px] uppercase tracking-[0.22em] text-navy/50 sm:text-[11px]">
               Lyca Mobile
             </p>
           </div>
@@ -132,7 +132,7 @@ export function LoginScreen({ demo }: { demo: DemoHint[] }) {
               <br />
               <span className="text-peach">accounted for.</span>
             </h1>
-            <p className="mt-3 hidden max-w-md text-[15px] leading-relaxed text-cream/65 sm:block lg:mt-5">
+            <p className="mt-3 hidden max-w-md text-[15px] leading-relaxed text-navy/65 sm:block lg:mt-5">
               Fast driver logging, branch-level oversight and clear fleet intelligence
               for every Lyca Mobile journey.
             </p>
@@ -142,7 +142,7 @@ export function LoginScreen({ demo }: { demo: DemoHint[] }) {
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            className="relative mt-10 hidden max-w-md overflow-hidden rounded-3xl border border-cream/15 shadow-lift lg:block"
+            className="relative mt-10 hidden max-w-md overflow-hidden rounded-3xl border border-navy/10 bg-white shadow-lift lg:block"
           >
             <Image
               src="/images/skoda.png"
@@ -152,10 +152,10 @@ export function LoginScreen({ demo }: { demo: DemoHint[] }) {
               className="h-56 w-full object-contain"
               priority
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-navy/85 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-white/90 via-transparent to-transparent" />
             <div className="absolute bottom-4 left-5 right-5 flex items-end justify-between">
               <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-cream/60">Fleet readiness</p>
+                <p className="text-[11px] uppercase tracking-[0.2em] text-navy/60">Fleet readiness</p>
                 <p className="font-display text-2xl font-bold">94% active today</p>
               </div>
               <span className="flex items-center gap-1.5 rounded-full bg-green px-3 py-1 text-xs font-bold text-navy">
@@ -166,10 +166,10 @@ export function LoginScreen({ demo }: { demo: DemoHint[] }) {
           </motion.div>
         </div>
 
-        <div className="relative z-10 hidden overflow-hidden border-t border-cream/10 py-4 sm:block">
+        <div className="relative z-10 hidden overflow-hidden border-t border-navy/10 py-4 sm:block">
           <div className="flex w-max animate-marquee items-center gap-8 whitespace-nowrap">
             {[...MARQUEE, ...MARQUEE].map((m, i) => (
-              <span key={i} className="flex items-center gap-3 text-[13px] font-medium text-cream/55">
+              <span key={i} className="flex items-center gap-3 text-[13px] font-medium text-navy/55">
                 <Route className="h-4 w-4 text-green" />
                 {m}
               </span>
@@ -186,6 +186,14 @@ export function LoginScreen({ demo }: { demo: DemoHint[] }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.05 }}
           >
+            <Image
+              src="/images/fleet_logo1.png"
+              alt="Lyca Fleet Tracker"
+              width={220}
+              height={92}
+              className="mb-6 h-auto w-44 object-contain object-left sm:w-52"
+              priority
+            />
             <div className="flex items-center gap-2 text-navy/60">
               <Lock className="h-4 w-4" />
               <p className="text-[11px] font-bold uppercase tracking-[0.22em]">Secure sign in</p>
@@ -341,7 +349,7 @@ export function LoginScreen({ demo }: { demo: DemoHint[] }) {
               className="flex h-20 w-20 items-center justify-center rounded-3xl bg-green text-navy shadow-lift"
             >
               <Image
-                src="/images/app-icon.png"
+                src="/images/app-icon.jpg"
                 alt="Lyca Fleet Tracker"
                 width={80}
                 height={80}
