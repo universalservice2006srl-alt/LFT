@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
-import { TOKEN_HEADER } from "@/lib/auth";
+import { NextRequest } from "next/server";
+import { updateSupabaseSession } from "@/lib/supabase/proxy";
 
 /**
  * Session bridge.
@@ -10,18 +10,8 @@ import { TOKEN_HEADER } from "@/lib/auth";
  * into a request header so server components and route handlers can resolve
  * the session without relying on cookie storage at all.
  */
-export default function proxy(request: NextRequest) {
-  const queryToken = request.nextUrl.searchParams.get("s");
-  if (!queryToken || request.headers.get(TOKEN_HEADER)) {
-    return NextResponse.next();
-  }
-
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set(TOKEN_HEADER, queryToken.trim());
-
-  // Keep `?s=` in the URL so server components can preserve it across
-  // role-based redirects; only the header is injected for auth resolution.
-  return NextResponse.next({ request: { headers: requestHeaders } });
+export default async function proxy(request: NextRequest) {
+  return updateSupabaseSession(request);
 }
 
 export const config = {

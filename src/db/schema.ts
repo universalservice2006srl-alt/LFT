@@ -75,7 +75,8 @@ export const profiles = pgTable("profiles", {
 
   /* ---------------- credentials (super-admin managed) ---------------- */
   /** scrypt digest — `scrypt$N$r$p$salt$hash`, never returned to clients. */
-  passwordHash: text("password_hash").notNull(),
+  /** Deprecated: authentication is managed by Supabase Auth. */
+  passwordHash: text("password_hash"),
   /**
    * Current password in readable form so the Super Admin can hand it to a
    * driver. Only ever exposed to super_admin through /api/users/:id/password.

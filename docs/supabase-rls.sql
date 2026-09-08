@@ -1,8 +1,9 @@
 -- FleetPulse production schema for Supabase Postgres.
 --
 -- Run this file once in Supabase Dashboard > SQL Editor. The application uses
--- its own server-side session and password authentication, so profiles.id is
--- not linked to auth.users. Keep DATABASE_URL server-only in Vercel.
+-- Supabase Auth owns passwords and sessions. profiles.id must equal the
+-- corresponding auth.users.id. Keep DATABASE_URL and the service-role key
+-- server-only in Vercel.
 
 create extension if not exists "pgcrypto";
 
@@ -16,7 +17,7 @@ create type trip_purpose as enum (
 );
 
 create table branches (
-  id uuid primary key default gen_random_uuid(),
+  id uuid primary key references auth.users(id) on delete cascade,
   name varchar(80) not null unique,
   city varchar(80) not null,
   code varchar(8) not null unique,
@@ -32,7 +33,8 @@ create table profiles (
   phone varchar(32),
   license_number varchar(40),
   avatar_color varchar(16) default '#245bc1',
-  password_hash text not null,
+  -- Legacy columns retained for a safe migration; they are never used for auth.
+  password_hash text,
   password_plain varchar(64),
   password_set_at timestamptz not null default now(),
   password_set_by uuid,

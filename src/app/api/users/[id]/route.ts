@@ -4,7 +4,8 @@ import { db } from "@/db";
 import { mileageLogs, profiles, vehicles } from "@/db/schema";
 import { getSessionUser } from "@/lib/auth";
 import { writeAudit } from "@/lib/data";
-import { generatePassword, hashPassword, validatePassword } from "@/lib/password";
+import { generatePassword, validatePassword } from "@/lib/password";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isUniqueViolation } from "@/lib/db-errors";
 
 async function requireAdmin() {
@@ -61,17 +62,9 @@ export async function PATCH(
       password = generatePassword();
     }
 
-    await db
-      .update(profiles)
-      .set({
-        passwordHash: hashPassword(password),
-        passwordPlain: password,
-        passwordSetAt: new Date(),
-        passwordSetBy: admin.id,
-        failedAttempts: 0,
-        lockedUntil: null,
-      })
-      .where(eq(profiles.id, id));
+    const { error } = await createSupabaseAdminClient().auth.admin.updateUserById(id, { password });
+    if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+    await db.update(profiles).set({ passwordSetAt: new Date(), passwordSetBy: admin.id }).where(eq(profiles.id, id));
 
     await writeAudit({
       actorId: admin.id,
@@ -127,6 +120,8 @@ export async function PATCH(
       return NextResponse.json({ error: "Enter a valid email address" }, { status: 400 });
     }
     patch.email = email;
+    const { error } = await createSupabaseAdminClient().auth.admin.updateUserById(id, { email, email_confirm: true });
+    if (error) return NextResponse.json({ error: error.message }, { status: 400 });
   }
   if (typeof body.phone === "string") patch.phone = body.phone.trim().slice(0, 32) || null;
   if (typeof body.licenseNumber === "string") {
@@ -257,6 +252,7 @@ export async function DELETE(
   }
 
   await db.update(vehicles).set({ primaryDriverId: null }).where(eq(vehicles.primaryDriverId, id));
+  await createSupabaseAdminClient().auth.admin.deleteUser(id);
   await db.delete(profiles).where(eq(profiles.id, id));
 
   await writeAudit({

@@ -4,7 +4,9 @@ import { db } from "@/db";
 import { profiles } from "@/db/schema";
 import { getSessionUser } from "@/lib/auth";
 import { writeAudit } from "@/lib/data";
-import { hashPassword, validatePassword, verifyPassword } from "@/lib/password";
+import { validatePassword } from "@/lib/password";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 /**
  * Self-service password change — Super Admin only.
@@ -37,31 +39,19 @@ export async function POST(request: NextRequest) {
     const problem = validatePassword(newPassword);
     if (problem) return NextResponse.json({ error: problem }, { status: 400 });
 
-    const rows = await db.select().from(profiles).where(eq(profiles.id, user.id)).limit(1);
-    const me = rows[0];
-    if (!me) return NextResponse.json({ error: "Account not found" }, { status: 404 });
-
-    if (!verifyPassword(currentPassword, me.passwordHash)) {
+    const supabase = await createSupabaseServerClient();
+    const { error: verifyError } = await supabase.auth.signInWithPassword({
+      email: user.email,
+      password: currentPassword,
+    });
+    if (verifyError) {
       return NextResponse.json({ error: "Current password is incorrect" }, { status: 401 });
     }
-    if (verifyPassword(newPassword, me.passwordHash)) {
-      return NextResponse.json(
-        { error: "New password must be different from the current one" },
-        { status: 400 }
-      );
-    }
-
-    await db
-      .update(profiles)
-      .set({
-        passwordHash: hashPassword(newPassword),
-        passwordPlain: newPassword,
-        passwordSetAt: new Date(),
-        passwordSetBy: user.id,
-        failedAttempts: 0,
-        lockedUntil: null,
-      })
-      .where(eq(profiles.id, user.id));
+    const { error } = await createSupabaseAdminClient().auth.admin.updateUserById(user.id, {
+      password: newPassword,
+    });
+    if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+    await db.update(profiles).set({ passwordSetAt: new Date(), passwordSetBy: user.id }).where(eq(profiles.id, user.id));
 
     await writeAudit({
       actorId: user.id,

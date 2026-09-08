@@ -6,8 +6,8 @@ import { getSessionUser } from "@/lib/auth";
 import { writeAudit } from "@/lib/data";
 
 /**
- * Reveals the current password to the fleet manager so it can be handed to a
- * driver. Super-admin only, and every read is written to the audit trail.
+ * Supabase never exposes passwords after creation. Keep this endpoint for the
+ * existing credential panel, but make the limitation explicit and auditable.
  */
 export async function GET(
   _request: NextRequest,
@@ -27,7 +27,6 @@ export async function GET(
     .select({
       fullName: profiles.fullName,
       email: profiles.email,
-      passwordPlain: profiles.passwordPlain,
       passwordSetAt: profiles.passwordSetAt,
     })
     .from(profiles)
@@ -48,7 +47,7 @@ export async function GET(
   return NextResponse.json({
     fullName: target.fullName,
     email: target.email,
-    password: target.passwordPlain,
+    password: null,
     passwordSetAt: target.passwordSetAt.toISOString(),
   });
 }

@@ -13,7 +13,7 @@ The application keeps its existing database role values for compatibility:
 2. Open **Project Settings > Database** and copy the **Session pooler** connection string. Use the pooler string for Vercel, with its password URL-encoded if it contains special characters.
 3. Open **SQL Editor**, paste `docs/supabase-rls.sql`, and run it once.
 
-The application uses its own password/session system, not Supabase Auth. Do not expose the database URL in client-side variables and do not add the Supabase service-role key to Vercel.
+The application uses Supabase Auth for all admin and user passwords and sessions. Set the public project URL and anon key for the browser/SSR client, and set the service-role key only as a server-side Vercel secret. Never expose either the database URL or service-role key to the browser.
 
 ### 2. Create the first admin
 
@@ -24,7 +24,7 @@ Copy-Item .env.example .env
 npm install
 ```
 
-Set `DATABASE_URL`, `ADMIN_EMAIL`, `ADMIN_NAME`, and a strong `ADMIN_PASSWORD` in `.env`, then run:
+Set `DATABASE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_EMAIL`, `ADMIN_NAME`, and a strong `ADMIN_PASSWORD` in `.env`, then run:
 
 ```powershell
 npm run db:create-admin
@@ -32,10 +32,12 @@ npm run db:create-admin
 
 The command refuses to overwrite an existing profile and prints the created login once. Remove `ADMIN_EMAIL`, `ADMIN_NAME`, and `ADMIN_PASSWORD` from the environment after setup; they are only needed by this command.
 
+Existing installations using the old local password system need a one-time account migration: create each user in Supabase Auth, update the matching profile `id` to that Auth user ID, and clear the legacy password columns before deploying this version. Existing local password hashes cannot be imported into Supabase Auth.
+
 ### 3. Deploy to Vercel
 
 1. Push the repository to GitHub and import it into Vercel.
-2. In **Vercel > Project Settings > Environment Variables**, add `DATABASE_URL` for Production, Preview, and Development as needed.
+2. In **Vercel > Project Settings > Environment Variables**, add `DATABASE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` for Production, Preview, and Development as needed.
 3. Add `SHOW_DEMO_CREDENTIALS=false` for Production. This hides seeded/demo credentials from the login screen.
 4. Deploy. Vercel detects Next.js and uses `npm run build` automatically.
 
@@ -63,6 +65,9 @@ npm run build
 | Variable | Required | Purpose |
 | --- | --- | --- |
 | `DATABASE_URL` | Yes | Supabase PostgreSQL connection string, server-only |
+| `NEXT_PUBLIC_SUPABASE_URL` | Yes | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Supabase public anon key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Yes | Server-only key for admin/user provisioning |
 | `SHOW_DEMO_CREDENTIALS` | Recommended | Set to `false` in production |
 | `ADMIN_EMAIL` | Bootstrap only | First admin email for `npm run db:create-admin` |
 | `ADMIN_NAME` | Bootstrap only | First admin display name |

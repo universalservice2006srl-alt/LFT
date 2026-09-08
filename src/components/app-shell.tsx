@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   CarFront,
   ClipboardCheck,
@@ -17,7 +17,7 @@ import {
 import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { ROLE_LABELS } from "@/lib/constants";
-import { authFetch, clearToken, getToken } from "@/lib/session-client";
+import { authFetch } from "@/lib/session-client";
 import type { SessionUserDTO } from "@/lib/types";
 
 type NavItem = {
@@ -51,22 +51,15 @@ function navFor(user: SessionUserDTO): NavItem[] {
 export function AppShell({ user, children }: { user: SessionUserDTO; children: React.ReactNode }) {
   const pathname = usePathname();
   const [signingOut, setSigningOut] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
-  useEffect(() => setToken(getToken() ?? user?.id ?? null), [user?.id]);
   const nav = navFor(user);
 
-  /** Append the token bridge so navigations stay authenticated in all environments. */
-  const activeToken = user?.id ?? token;
-  const link = (href: string) =>
-    activeToken ? `${href}${href.includes("?") ? "&" : "?"}s=${encodeURIComponent(activeToken)}` : href;
+  const link = (href: string) => href;
 
   async function signOut() {
     setSigningOut(true);
-    clearToken();
     try {
       await authFetch("/api/auth/logout", { method: "POST" });
     } finally {
-      clearToken();
       window.location.assign("/");
     }
   }

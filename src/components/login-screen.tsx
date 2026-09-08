@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowRight,
   Eye,
   EyeOff,
   Gauge,
@@ -21,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { authFetch, clearToken, getToken, setToken, withToken } from "@/lib/session-client";
+import { authFetch } from "@/lib/session-client";
 
 export type DemoHint = { role: string; email: string; password: string | null };
 
@@ -41,37 +40,6 @@ export function LoginScreen({ demo }: { demo: DemoHint[] }) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [launching, setLaunching] = useState<string | null>(null);
-  const [resumeUser, setResumeUser] = useState<{ fullName: string; role: string } | null>(null);
-
-  // Restore an existing session in cookie-blocked (embedded) contexts.
-  useEffect(() => {
-    const token = getToken();
-    if (!token) return;
-    let cancelled = false;
-    authFetch("/api/me")
-      .then(async (res) => {
-        if (cancelled) return;
-        if (res.ok) {
-          const data = await res.json();
-          setResumeUser({ fullName: data.user.fullName, role: data.user.role });
-        } else {
-          clearToken();
-        }
-      })
-      .catch(() => undefined);
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  function resume() {
-    if (!resumeUser) return;
-    const token = getToken();
-    setLaunching(resumeUser.fullName);
-    const target = resumeUser.role === "driver" ? "/drive" : "/dashboard";
-    const dest = token ? `${target}${target.includes("?") ? "&" : "?"}s=${encodeURIComponent(token)}` : target;
-    window.setTimeout(() => window.location.assign(dest), 450);
-  }
 
   async function signIn(e?: React.FormEvent) {
     e?.preventDefault();
@@ -87,12 +55,9 @@ export function LoginScreen({ demo }: { demo: DemoHint[] }) {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Sign in failed");
-      const token = typeof data.token === "string" ? data.token : "";
-      if (token) setToken(token);
       setLaunching(data.user?.fullName ?? "there");
       const target = typeof data.redirect === "string" ? data.redirect : "/dashboard";
-      const dest = token ? `${target}${target.includes("?") ? "&" : "?"}s=${encodeURIComponent(token)}` : target;
-      window.setTimeout(() => window.location.assign(dest), 500);
+      window.setTimeout(() => window.location.assign(target), 500);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Sign in failed");
       setSubmitting(false);
@@ -226,25 +191,6 @@ export function LoginScreen({ demo }: { demo: DemoHint[] }) {
               fleet manager.
             </p>
           </motion.div>
-
-          {resumeUser && (
-            <motion.button
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              onClick={resume}
-              className="mt-4 flex w-full items-center justify-between gap-3 rounded-2xl border-2 border-green/50 bg-green/10 px-4 py-3 text-left transition-all hover:bg-green/15 cursor-pointer"
-            >
-              <span>
-                <span className="block text-[11px] font-bold uppercase tracking-wider text-green-deep">
-                  Session found
-                </span>
-                <span className="block text-sm font-semibold text-navy">
-                  Continue as {resumeUser.fullName}
-                </span>
-              </span>
-              <ArrowRight className="h-4.5 w-4.5 text-green-deep" />
-            </motion.button>
-          )}
 
           <motion.form
             onSubmit={signIn}

@@ -12,7 +12,7 @@ import {
   vehicles,
 } from "./schema";
 import { sql } from "drizzle-orm";
-import { hashPassword } from "@/lib/password";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 /* ------------------------------------------------------------------ */
 /* Deterministic PRNG                                                  */
@@ -210,15 +210,25 @@ async function main() {
   };
 
   type ProfileInsert = typeof profiles.$inferInsert;
+  const supabase = createSupabaseAdminClient();
+  const seedPasswords = new Map<string, string>();
 
-  /** attach a readable password + scrypt hash to every seeded account */
-  const withCreds = <T extends Omit<ProfileInsert, "passwordHash">>(p: T) => {
+  /** Create each profile with a matching Supabase Auth identity. */
+  const withCreds = async <T extends ProfileInsert>(p: T): Promise<ProfileInsert> => {
     const pw = seedPassword();
-    return { ...p, passwordPlain: pw, passwordHash: hashPassword(pw) };
+    const { data, error } = await supabase.auth.admin.createUser({
+      email: p.email,
+      password: pw,
+      email_confirm: true,
+      user_metadata: { full_name: p.fullName },
+    });
+    if (error || !data.user) throw new Error(error?.message ?? `Could not create ${p.email}`);
+    seedPasswords.set(p.email, pw);
+    return { ...p, id: data.user.id, passwordPlain: null, passwordHash: null };
   };
 
   const profileInserts: ProfileInsert[] = [
-    withCreds({
+    await withCreds({
       fullName: "Elena Marchetti",
       email: "elena.marchetti@meridian-group.it",
       role: "super_admin",
@@ -233,7 +243,7 @@ async function main() {
 
   for (const b of BRANCHES) {
     profileInserts.push(
-      withCreds({
+      await withCreds({
         fullName: MANAGERS[b.code],
         email: emailFor(MANAGERS[b.code]),
         role: "branch_manager",
@@ -247,7 +257,7 @@ async function main() {
       const fullName = DRIVER_NAMES[nameIdx++];
       names.push(fullName);
       profileInserts.push(
-        withCreds({
+        await withCreds({
           fullName,
           email: emailFor(fullName),
           role: "driver",
@@ -570,7 +580,7 @@ async function main() {
   ];
   console.log("\nSign-in credentials:");
   for (const p of sample) {
-    console.log(`  ${p.role.padEnd(15)} ${p.email}  ${p.passwordPlain}`);
+    console.log(`  ${p.role.padEnd(15)} ${p.email}  ${seedPasswords.get(p.email) ?? ""}`);
   }
   process.exit(0);
 }

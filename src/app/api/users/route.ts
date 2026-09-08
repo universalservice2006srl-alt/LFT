@@ -3,7 +3,8 @@ import { db } from "@/db";
 import { profiles } from "@/db/schema";
 import { getSessionUser } from "@/lib/auth";
 import { writeAudit } from "@/lib/data";
-import { generatePassword, hashPassword, validatePassword } from "@/lib/password";
+import { generatePassword } from "@/lib/password";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isUniqueViolation } from "@/lib/db-errors";
 
 const COLORS = ["#245bc1", "#08dc7d", "#46286E", "#00b3d7", "#c2741a", "#21264e"];
@@ -40,18 +41,27 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Branch is required for this role" }, { status: 400 });
     }
 
-    // Admin may supply a password, otherwise one is generated.
+    // Supabase Auth owns the password. Return a generated one only once so the
+    // manager can hand it to the new user.
     let password = body.password ? String(body.password) : "";
-    if (password) {
-      const problem = validatePassword(password);
-      if (problem) return NextResponse.json({ error: problem }, { status: 400 });
-    } else {
-      password = generatePassword();
+    if (!password) password = generatePassword();
+
+    const supabase = createSupabaseAdminClient();
+    const { data: authUser, error: authError } = await supabase.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+      user_metadata: { full_name: fullName },
+    });
+    if (authError || !authUser.user) {
+      return NextResponse.json({ error: authError?.message ?? "Could not create auth user" }, { status: 400 });
     }
 
-    const [inserted] = await db
-      .insert(profiles)
-      .values({
+    try {
+      const [inserted] = await db
+        .insert(profiles)
+        .values({
+          id: authUser.user.id,
         fullName,
         email,
         role: role as never,
@@ -59,14 +69,12 @@ export async function POST(request: NextRequest) {
         phone,
         licenseNumber,
         avatarColor: COLORS[Math.floor(Math.random() * COLORS.length)],
-        passwordHash: hashPassword(password),
-        passwordPlain: password,
         passwordSetBy: user.id,
         isActive: true,
-      })
-      .returning();
+        })
+        .returning();
 
-    await writeAudit({
+      await writeAudit({
       actorId: user.id,
       action: "user.created",
       entityType: "profile",
@@ -75,13 +83,17 @@ export async function POST(request: NextRequest) {
       details: `Created ${role.replace("_", " ")} · ${fullName} (${email})`,
     });
 
-    return NextResponse.json({
+      return NextResponse.json({
       ok: true,
       id: inserted.id,
       email: inserted.email,
       fullName: inserted.fullName,
       password,
-    });
+      });
+    } catch (error) {
+      await supabase.auth.admin.deleteUser(authUser.user.id);
+      throw error;
+    }
   } catch (e: unknown) {
     const msg = isUniqueViolation(e)
       ? "A user with this email already exists"

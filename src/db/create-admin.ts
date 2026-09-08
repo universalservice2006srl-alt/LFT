@@ -2,7 +2,8 @@ import "dotenv/config";
 import { eq } from "drizzle-orm";
 import { db, pool } from "./index";
 import { profiles } from "./schema";
-import { hashPassword, generatePassword, validatePassword } from "@/lib/password";
+import { generatePassword, validatePassword } from "@/lib/password";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 async function main() {
   const email = (process.env.ADMIN_EMAIL ?? "").trim().toLowerCase();
@@ -25,14 +26,21 @@ async function main() {
     throw new Error(`A profile already exists for ${email}; no changes were made`);
   }
 
+  const { data: authUser, error: authError } = await createSupabaseAdminClient().auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+    user_metadata: { full_name: fullName },
+  });
+  if (authError || !authUser.user) throw new Error(authError?.message ?? "Could not create auth user");
+
   const [admin] = await db
     .insert(profiles)
     .values({
+      id: authUser.user.id,
       email,
       fullName,
       role: "super_admin",
-      passwordHash: hashPassword(password),
-      passwordPlain: password,
       isActive: true,
     })
     .returning({ id: profiles.id, email: profiles.email });
