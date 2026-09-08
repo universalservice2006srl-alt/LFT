@@ -17,6 +17,7 @@ import {
   Sunrise,
   Sunset,
   UserRoundCheck,
+  UserRoundCog,
 } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -38,6 +39,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { ManualLogDialog } from "@/components/dashboard/manual-log-dialog";
 import { PhotoUpload } from "@/components/driver/photo-upload";
 import { VehiclePicker } from "@/components/driver/vehicle-picker";
 import {
@@ -71,6 +73,7 @@ export function DriverApp({
   recentLogs: LogRow[];
 }) {
   const [now, setNow] = useState<Date | null>(null);
+  const [manualOpen, setManualOpen] = useState(false);
   useEffect(() => setNow(new Date()), []);
   const hour = now ? now.getHours() : 9;
   const defaultType: EntryType = hour < 12 ? "morning" : hour < 16 ? "refuel" : "evening";
@@ -242,6 +245,14 @@ export function DriverApp({
               </div>
             </div>
           </div>
+
+          {user.role !== "driver" && (
+            <div className="mt-5 flex justify-end">
+              <Button variant="outline" size="sm" onClick={() => setManualOpen(true)}>
+                <UserRoundCog className="h-4 w-4" /> Record for driver
+              </Button>
+            </div>
+          )}
 
           {/* Entry type segmented control */}
           <div className="mt-5 grid grid-cols-3 gap-1.5 rounded-2xl bg-navy/6 p-1.5">
@@ -668,6 +679,16 @@ export function DriverApp({
           <ArrowRight className="h-5 w-5 shrink-0" />
         </Button>
       </div>
+
+      <ManualLogDialog
+        user={user}
+        open={manualOpen}
+        onOpenChange={setManualOpen}
+        onCreated={() => {
+          setSuccess({ temporary: false, flagged: false });
+          setTimeout(() => setSuccess(null), 2200);
+        }}
+      />
 
       {/* ------------------------- Success overlay ------------------------- */}
       <AnimatePresence>

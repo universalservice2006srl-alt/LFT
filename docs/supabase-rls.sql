@@ -24,6 +24,17 @@ create table branches (
   created_at timestamptz not null default now()
 );
 
+insert into branches (name, city, code)
+values
+  ('Bari', 'Bari', 'BAR'),
+  ('Bologna', 'Bologna', 'BOL'),
+  ('Milan', 'Milan', 'MIL'),
+  ('Naples', 'Naples', 'NAP'),
+  ('Rome', 'Rome', 'ROM'),
+  ('Padua', 'Padua', 'PAD'),
+  ('Palermo', 'Palermo', 'PAL'),
+  ('Turin', 'Turin', 'TOR');
+
 create table profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   email varchar(160) not null unique,
