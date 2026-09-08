@@ -81,6 +81,9 @@ export async function POST(request: NextRequest) {
         .limit(1);
       const driver = dRows[0];
       if (!driver) return NextResponse.json({ error: "Driver not found" }, { status: 404 });
+      if (driver.role !== "driver" || !driver.isActive) {
+        return NextResponse.json({ error: "That profile is not an active driver" }, { status: 400 });
+      }
 
       if (user.role === "branch_manager") {
         if (driver.branchId !== user.branchId) {

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { and, asc, eq, ne, type SQL } from "drizzle-orm";
+import { and, asc, eq, type SQL } from "drizzle-orm";
 import { db } from "@/db";
 import { branches, profiles, vehicles } from "@/db/schema";
 import { getSessionUser } from "@/lib/auth";
@@ -15,7 +15,7 @@ export async function GET() {
     return NextResponse.json({ error: "Not permitted" }, { status: 403 });
   }
 
-  const conds: SQL[] = [eq(profiles.isActive, true), ne(profiles.role, "super_admin")];
+  const conds: SQL[] = [eq(profiles.isActive, true), eq(profiles.role, "driver")];
   if (user.role === "branch_manager" && user.branchId) {
     conds.push(eq(profiles.branchId, user.branchId));
   }
