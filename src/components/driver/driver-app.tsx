@@ -110,6 +110,9 @@ export function DriverApp({
   }, [useOther, myVehicles]);
 
   const canSubmit = useMemo(() => {
+    if (!vehicle && (!myVehicles.length || user.role !== "driver")) {
+      return Number.isFinite(odoNum) && odoNum > 0 && !(entryType === "refuel" && (Number(liters) <= 0 || Number(cost) <= 0));
+    }
     if (!vehicle) return false;
     if (!Number.isFinite(odoNum) || odoNum <= 0) return false;
     if (isTemp && !purpose) return false;
@@ -120,7 +123,7 @@ export function DriverApp({
       if (!Number.isFinite(c) || c <= 0) return false;
     }
     return true;
-  }, [vehicle, odoNum, isTemp, purpose, entryType, liters, cost]);
+  }, [vehicle, myVehicles.length, user.role, odoNum, isTemp, purpose, entryType, liters, cost]);
 
   function captureLocation() {
     if (!navigator.geolocation) return;
@@ -329,7 +332,14 @@ export function DriverApp({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                 >
-                  <VehiclePicker user={user} selected={vehicle} onSelect={setVehicle} />
+                  <VehiclePicker
+                    user={user}
+                    selected={vehicle}
+                    onSelect={(next) => {
+                      setVehicle(next);
+                      if (!next) setPurpose("");
+                    }}
+                  />
                 </motion.div>
               )}
             </AnimatePresence>
