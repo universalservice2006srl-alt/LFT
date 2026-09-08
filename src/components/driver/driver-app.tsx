@@ -206,10 +206,10 @@ export function DriverApp({
         : "Good evening";
 
   return (
-    <div className="mx-auto w-full max-w-6xl pb-20 lg:pb-0">
-      <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+    <div className="mx-auto w-full min-w-0 max-w-6xl overflow-x-hidden pb-20 lg:pb-0">
+      <div className="grid min-w-0 gap-6 lg:grid-cols-[1.05fr_0.95fr]">
         {/* ============================ LEFT: ENTRY ============================ */}
-        <div>
+        <div className="min-w-0">
           {/* Greeting */}
           <div className="relative overflow-hidden rounded-3xl bg-navy p-5 text-cream sm:p-6">
             <div
@@ -219,10 +219,10 @@ export function DriverApp({
                   "radial-gradient(circle at 85% 20%, rgba(0,215,255,0.18), transparent 40%), radial-gradient(circle at 15% 90%, rgba(8,220,125,0.22), transparent 45%)",
               }}
             />
-            <div className="relative flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3.5">
+            <div className="relative flex min-w-0 items-center justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-3.5">
                 <Avatar name={user.fullName} color={user.avatarColor} className="h-12 w-12 rounded-2xl" textClassName="text-sm" />
-                <div>
+                <div className="min-w-0">
                   <p className="text-xs font-medium text-cream/60">
                     {greeting},
                   </p>
@@ -231,8 +231,8 @@ export function DriverApp({
                   </h1>
                 </div>
               </div>
-              <div className="text-right">
-                <p className="font-mono text-[13px] font-semibold text-green">
+              <div className="min-w-0 max-w-[45%] text-right">
+                <p className="truncate font-mono text-[13px] font-semibold text-green">
                   {now
                     ? now.toLocaleDateString("en-GB", {
                         weekday: "short",
@@ -242,7 +242,7 @@ export function DriverApp({
                       })
                     : "Today"}
                 </p>
-                <p className="mt-0.5 text-[11px] uppercase tracking-[0.18em] text-cream/50">
+                <p className="mt-0.5 truncate text-[11px] uppercase tracking-[0.18em] text-cream/50">
                   {user.branchName ?? "Head Office"}
                 </p>
               </div>
@@ -258,7 +258,7 @@ export function DriverApp({
           )}
 
           {/* Entry type segmented control */}
-          <div className="mt-5 grid grid-cols-3 gap-1.5 rounded-2xl bg-navy/6 p-1.5">
+          <div className="mt-5 grid min-w-0 grid-cols-3 gap-1.5 rounded-2xl bg-navy/6 p-1.5">
             {ENTRY_TABS.map((t) => {
               const active = entryType === t.value;
               return (
@@ -266,7 +266,7 @@ export function DriverApp({
                   key={t.value}
                   onClick={() => setEntryType(t.value)}
                   className={cn(
-                    "relative flex flex-col items-center gap-1 rounded-xl px-2 py-3 text-[11px] font-bold uppercase tracking-wider transition-all cursor-pointer sm:flex-row sm:justify-center sm:gap-2 sm:text-xs",
+                    "relative flex min-w-0 flex-col items-center gap-1 rounded-xl px-1.5 py-3 text-[11px] font-bold uppercase tracking-wider transition-all cursor-pointer sm:flex-row sm:justify-center sm:gap-2 sm:text-xs",
                     active ? "text-cream" : "text-navy/50 hover:text-navy"
                   )}
                 >
@@ -278,7 +278,7 @@ export function DriverApp({
                     />
                   )}
                   <t.icon className={cn("relative h-4.5 w-4.5", active && "text-green")} />
-                  <span className="relative">{t.label}</span>
+                  <span className="relative max-w-full truncate">{t.label}</span>
                 </button>
               );
             })}
@@ -590,12 +590,12 @@ export function DriverApp({
         </div>
 
         {/* ============================ RIGHT: HISTORY ============================ */}
-        <div className="lg:sticky lg:top-8 lg:self-start">
-          <div className="mb-3 flex items-center justify-between">
+        <div className="min-w-0 lg:sticky lg:top-8 lg:self-start">
+          <div className="mb-3 flex min-w-0 items-center justify-between gap-3">
             <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-navy/45">
               <History className="h-4 w-4" /> Recent submissions
             </p>
-            <span className="text-xs text-ink-soft">{logs.length} shown</span>
+            <span className="shrink-0 text-xs text-ink-soft">{logs.length} shown</span>
           </div>
 
           <div className="space-y-2.5">
