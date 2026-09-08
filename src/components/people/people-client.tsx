@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
   Ban,
@@ -104,6 +104,7 @@ export function PeopleClient({
 
   const [addOpen, setAddOpen] = useState(false);
   const [form, setForm] = useState<FormState>(EMPTY);
+  const [fleetVehicles, setFleetVehicles] = useState<Array<{ id: string; plateNumber: string; branchId: string; label: string; primaryDriverId: string | null }>>([]);
   const [customPw, setCustomPw] = useState("");
 
   const [editTarget, setEditTarget] = useState<PersonRow | null>(null);
@@ -123,6 +124,24 @@ export function PeopleClient({
   const [noticeError, setNoticeError] = useState(false);
 
   const refresh = () => startTransition(() => router.refresh());
+
+  useEffect(() => {
+    if (!addOpen) return;
+    authFetch("/api/vehicles")
+      .then((res) => (res.ok ? res.json() : { vehicles: [] }))
+      .then((data) => {
+        const pool = Array.isArray(data.vehicles) ? data.vehicles : [];
+        setFleetVehicles(
+          pool.filter((v: { branchId: string; primaryDriverId: string | null }) => !v.primaryDriverId)
+        );
+      })
+      .catch(() => setFleetVehicles([]));
+  }, [addOpen]);
+
+  const availableFleetForBranch = useMemo(
+    () => fleetVehicles.filter((v) => v.branchId === form.branchId),
+    [fleetVehicles, form.branchId]
+  );
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
@@ -576,7 +595,21 @@ export function PeopleClient({
               </div>
               <div>
                 <Label>Licence no.</Label>
-                <Input value={form.licenseNumber} onChange={(e) => setForm({ ...form, licenseNumber: e.target.value })} placeholder="U1234567X" className="mt-1.5 font-mono" />
+                <Select
+                  value={form.licenseNumber || "none"}
+                  onValueChange={(v) => setForm({ ...form, licenseNumber: v === "none" ? "" : v })}
+                  disabled={form.role === "super_admin" || !form.branchId}
+                >
+                  <SelectTrigger className="mt-1.5">
+                    <SelectValue placeholder={form.branchId ? "Select available vehicle" : "Pick a branch first"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Leave blank / no assigned vehicle</SelectItem>
+                    {availableFleetForBranch.map((v) => (
+                      <SelectItem key={v.id} value={v.plateNumber}>{v.plateNumber}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <div>
@@ -654,7 +687,23 @@ export function PeopleClient({
               </div>
               <div>
                 <Label>Licence no.</Label>
-                <Input value={editForm.licenseNumber} onChange={(e) => setEditForm({ ...editForm, licenseNumber: e.target.value })} className="mt-1.5 font-mono" />
+                <Select
+                  value={editForm.licenseNumber || "none"}
+                  onValueChange={(v) => setEditForm({ ...editForm, licenseNumber: v === "none" ? "" : v })}
+                  disabled={editForm.role === "super_admin" || !editForm.branchId}
+                >
+                  <SelectTrigger className="mt-1.5">
+                    <SelectValue placeholder={editForm.branchId ? "Select available vehicle" : "Pick a branch first"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Leave blank / no assigned vehicle</SelectItem>
+                    {fleetVehicles
+                      .filter((v) => v.branchId === editForm.branchId)
+                      .map((v) => (
+                        <SelectItem key={v.id} value={v.plateNumber}>{v.plateNumber}</SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </div>
