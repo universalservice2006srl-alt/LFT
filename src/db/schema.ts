@@ -70,7 +70,9 @@ export const profiles = pgTable("profiles", {
     onDelete: "set null",
   }),
   phone: varchar("phone", { length: 32 }),
-  licenseNumber: varchar("license_number", { length: 40 }),
+  vehicleReg: varchar("vehicle_reg", { length: 40 }),
+  drivingLicenceNumber: varchar("driving_licence_number", { length: 40 }),
+  drivingLicenceExpiry: timestamp("driving_licence_expiry", { withTimezone: true }),
   avatarColor: varchar("avatar_color", { length: 16 }).default("#245bc1"),
 
   /* ---------------- credentials (super-admin managed) ---------------- */

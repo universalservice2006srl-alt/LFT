@@ -26,8 +26,12 @@ export async function POST(request: NextRequest) {
     const role = String(body.role ?? "driver");
     const branchId = body.branchId ? String(body.branchId) : null;
     const phone = body.phone ? String(body.phone).trim().slice(0, 32) : null;
-    const licenseNumber = body.licenseNumber
-      ? String(body.licenseNumber).trim().slice(0, 40)
+    const vehicleReg = body.vehicleReg ? String(body.vehicleReg).trim().slice(0, 40) : null;
+    const drivingLicenceNumber = body.drivingLicenceNumber
+      ? String(body.drivingLicenceNumber).trim().slice(0, 40)
+      : null;
+    const drivingLicenceExpiry = body.drivingLicenceExpiry
+      ? new Date(String(body.drivingLicenceExpiry))
       : null;
 
     if (!fullName) return NextResponse.json({ error: "Full name is required" }, { status: 400 });
@@ -39,6 +43,9 @@ export async function POST(request: NextRequest) {
     }
     if (role !== "super_admin" && !branchId) {
       return NextResponse.json({ error: "Branch is required for this role" }, { status: 400 });
+    }
+    if (drivingLicenceExpiry && Number.isNaN(drivingLicenceExpiry.getTime())) {
+      return NextResponse.json({ error: "Driving licence expiry date is invalid" }, { status: 400 });
     }
 
     // Supabase Auth owns the password. Return a generated one only once so the
@@ -67,7 +74,9 @@ export async function POST(request: NextRequest) {
         role: role as never,
         branchId: role === "super_admin" ? null : branchId,
         phone,
-        licenseNumber,
+        vehicleReg,
+        drivingLicenceNumber,
+        drivingLicenceExpiry: drivingLicenceExpiry ?? null,
         avatarColor: COLORS[Math.floor(Math.random() * COLORS.length)],
         passwordSetBy: user.id,
         isActive: true,

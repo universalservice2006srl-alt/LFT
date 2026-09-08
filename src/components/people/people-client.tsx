@@ -71,7 +71,9 @@ type FormState = {
   role: string;
   branchId: string;
   phone: string;
-  licenseNumber: string;
+  vehicleReg: string;
+  drivingLicenceNumber: string;
+  drivingLicenceExpiry: string;
 };
 
 const EMPTY: FormState = {
@@ -80,7 +82,9 @@ const EMPTY: FormState = {
   role: "driver",
   branchId: "",
   phone: "",
-  licenseNumber: "",
+  vehicleReg: "",
+  drivingLicenceNumber: "",
+  drivingLicenceExpiry: "",
 };
 
 /* ------------------------------------------------------------------ */
@@ -131,9 +135,7 @@ export function PeopleClient({
       .then((res) => (res.ok ? res.json() : { vehicles: [] }))
       .then((data) => {
         const pool = Array.isArray(data.vehicles) ? data.vehicles : [];
-        setFleetVehicles(
-          pool.filter((v: { branchId: string; primaryDriverId: string | null }) => !v.primaryDriverId)
-        );
+        setFleetVehicles(pool as Array<{ id: string; plateNumber: string; branchId: string; label: string; primaryDriverId: string | null }>);
       })
       .catch(() => setFleetVehicles([]));
   }, [addOpen]);
@@ -205,7 +207,9 @@ export function PeopleClient({
       role: p.role,
       branchId: p.branchId ?? "",
       phone: p.phone ?? "",
-      licenseNumber: p.licenseNumber ?? "",
+      vehicleReg: p.vehicleReg ?? "",
+      drivingLicenceNumber: p.drivingLicenceNumber ?? "",
+      drivingLicenceExpiry: p.drivingLicenceExpiry ? new Date(p.drivingLicenceExpiry).toISOString().slice(0, 10) : "",
     });
     setError(null);
   }
@@ -494,23 +498,31 @@ export function PeopleClient({
                       </p>
                     )}
                     {p.role === "driver" && (
-                      <p className="flex items-center gap-2 truncate">
-                        <IdCard className="h-3.5 w-3.5 shrink-0 text-navy/35" />
-                        {p.licenseNumber ? (
-                          <span className="font-mono">{p.licenseNumber}</span>
-                        ) : (
-                          <span className="text-navy/35">No licence on file</span>
+                      <>
+                        <p className="flex items-center gap-2 truncate">
+                          <IdCard className="h-3.5 w-3.5 shrink-0 text-navy/35" />
+                          {p.drivingLicenceNumber ? (
+                            <span className="font-mono">{p.drivingLicenceNumber}</span>
+                          ) : (
+                            <span className="text-navy/35">No driving licence on file</span>
+                          )}
+                        </p>
+                        {p.drivingLicenceExpiry && (
+                          <p className="flex items-center gap-2 truncate text-[11px] text-navy/55">
+                            <span className="inline-block w-3.5" />
+                            Expires {new Date(p.drivingLicenceExpiry).toLocaleDateString("en-GB")}
+                          </p>
                         )}
-                      </p>
+                      </>
                     )}
                     <p className="flex items-center gap-2 truncate">
                       <CarFront className="h-3.5 w-3.5 shrink-0 text-navy/35" />
-                      {p.vehiclePlates.length > 0 ? (
+                      {p.vehicleReg ? (
                         <span className="truncate font-mono font-semibold text-navy/70">
-                          {p.vehiclePlates.join(" · ")}
+                          {p.vehicleReg}
                         </span>
                       ) : (
-                        <span className="text-navy/35">No assigned vehicle</span>
+                        <span className="text-navy/35">No vehicle reg</span>
                       )}
                     </p>
                   </div>
@@ -594,10 +606,10 @@ export function PeopleClient({
                 <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+39 340 000 0000" className="mt-1.5" />
               </div>
               <div>
-                <Label>Licence no.</Label>
+                <Label>Vehicle Reg.</Label>
                 <Select
-                  value={form.licenseNumber || "none"}
-                  onValueChange={(v) => setForm({ ...form, licenseNumber: v === "none" ? "" : v })}
+                  value={form.vehicleReg || "none"}
+                  onValueChange={(v) => setForm({ ...form, vehicleReg: v === "none" ? "" : v })}
                   disabled={form.role === "super_admin" || !form.branchId}
                 >
                   <SelectTrigger className="mt-1.5">
@@ -612,6 +624,28 @@ export function PeopleClient({
                 </Select>
               </div>
             </div>
+            {form.role === "driver" && (
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label>Driving Licence No.</Label>
+                  <Input
+                    value={form.drivingLicenceNumber}
+                    onChange={(e) => setForm({ ...form, drivingLicenceNumber: e.target.value })}
+                    placeholder="U1234567X"
+                    className="mt-1.5 font-mono"
+                  />
+                </div>
+                <div>
+                  <Label>Expiry date</Label>
+                  <Input
+                    type="date"
+                    value={form.drivingLicenceExpiry}
+                    onChange={(e) => setForm({ ...form, drivingLicenceExpiry: e.target.value })}
+                    className="mt-1.5"
+                  />
+                </div>
+              </div>
+            )}
             <div>
               <Label>Password (optional)</Label>
               <Input
@@ -686,10 +720,10 @@ export function PeopleClient({
                 <Input value={editForm.phone} onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })} className="mt-1.5" />
               </div>
               <div>
-                <Label>Licence no.</Label>
+                <Label>Vehicle Reg.</Label>
                 <Select
-                  value={editForm.licenseNumber || "none"}
-                  onValueChange={(v) => setEditForm({ ...editForm, licenseNumber: v === "none" ? "" : v })}
+                  value={editForm.vehicleReg || "none"}
+                  onValueChange={(v) => setEditForm({ ...editForm, vehicleReg: v === "none" ? "" : v })}
                   disabled={editForm.role === "super_admin" || !editForm.branchId}
                 >
                   <SelectTrigger className="mt-1.5">
@@ -706,6 +740,27 @@ export function PeopleClient({
                 </Select>
               </div>
             </div>
+            {editForm.role === "driver" && (
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label>Driving Licence No.</Label>
+                  <Input
+                    value={editForm.drivingLicenceNumber}
+                    onChange={(e) => setEditForm({ ...editForm, drivingLicenceNumber: e.target.value })}
+                    className="mt-1.5 font-mono"
+                  />
+                </div>
+                <div>
+                  <Label>Expiry date</Label>
+                  <Input
+                    type="date"
+                    value={editForm.drivingLicenceExpiry}
+                    onChange={(e) => setEditForm({ ...editForm, drivingLicenceExpiry: e.target.value })}
+                    className="mt-1.5"
+                  />
+                </div>
+              </div>
+            )}
           </div>
           {error && <p className="rounded-xl bg-red/10 px-3.5 py-2.5 text-sm font-semibold text-red">{error}</p>}
           <DialogFooter>

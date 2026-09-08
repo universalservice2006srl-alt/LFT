@@ -385,20 +385,12 @@ export async function listPeople(user: SessionUserDTO): Promise<PersonRow[]> {
     .where(and(...conds))
     .orderBy(asc(profiles.role), asc(profiles.fullName));
 
-  const assigned = await db
-    .select({
-      primaryDriverId: vehicles.primaryDriverId,
-      plateNumber: vehicles.plateNumber,
-    })
-    .from(vehicles)
-    .where(isNotNull(vehicles.primaryDriverId));
-
   const plateMap = new Map<string, string[]>();
-  for (const a of assigned) {
-    if (!a.primaryDriverId) continue;
-    const arr = plateMap.get(a.primaryDriverId) ?? [];
-    arr.push(a.plateNumber);
-    plateMap.set(a.primaryDriverId, arr);
+  for (const r of rows) {
+    if (!r.profile.vehicleReg) continue;
+    const arr = plateMap.get(r.profile.id) ?? [];
+    arr.push(r.profile.vehicleReg);
+    plateMap.set(r.profile.id, arr);
   }
 
   const logCounts = await db

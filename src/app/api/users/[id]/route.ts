@@ -124,8 +124,18 @@ export async function PATCH(
     if (error) return NextResponse.json({ error: error.message }, { status: 400 });
   }
   if (typeof body.phone === "string") patch.phone = body.phone.trim().slice(0, 32) || null;
-  if (typeof body.licenseNumber === "string") {
-    patch.licenseNumber = body.licenseNumber.trim().slice(0, 40) || null;
+  if (typeof body.vehicleReg === "string") {
+    patch.vehicleReg = body.vehicleReg.trim().slice(0, 40) || null;
+  }
+  if (typeof body.drivingLicenceNumber === "string") {
+    patch.drivingLicenceNumber = body.drivingLicenceNumber.trim().slice(0, 40) || null;
+  }
+  if (typeof body.drivingLicenceExpiry === "string" || body.drivingLicenceExpiry === null) {
+    const d = body.drivingLicenceExpiry ? new Date(String(body.drivingLicenceExpiry)) : null;
+    if (d && Number.isNaN(d.getTime())) {
+      return NextResponse.json({ error: "Driving licence expiry date is invalid" }, { status: 400 });
+    }
+    patch.drivingLicenceExpiry = d ?? null;
   }
   if (typeof body.role === "string") {
     if (!["super_admin", "branch_manager", "driver"].includes(body.role)) {

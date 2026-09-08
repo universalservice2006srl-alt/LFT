@@ -263,7 +263,9 @@ async function main() {
           role: "driver",
           branchId: branchByCode.get(b.code)!.id,
           phone: `+39 3${rint(10, 99)} ${rint(100, 999)} ${rint(1000, 9999)}`,
-          licenseNumber: `U1${rint(10000000, 99999999)}X`,
+          vehicleReg: plate(),
+          drivingLicenceNumber: `U1${rint(10000000, 99999999)}X`,
+          drivingLicenceExpiry: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000 * rint(1, 5)),
           avatarColor: pick(AVATAR_COLORS),
         })
       );
