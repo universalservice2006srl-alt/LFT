@@ -17,7 +17,7 @@ create type trip_purpose as enum (
 );
 
 create table branches (
-  id uuid primary key references auth.users(id) on delete cascade,
+  id uuid primary key default gen_random_uuid(),
   name varchar(80) not null unique,
   city varchar(80) not null,
   code varchar(8) not null unique,
@@ -25,7 +25,7 @@ create table branches (
 );
 
 create table profiles (
-  id uuid primary key default gen_random_uuid(),
+  id uuid primary key references auth.users(id) on delete cascade,
   email varchar(160) not null unique,
   full_name varchar(120) not null,
   role user_role not null default 'driver',
