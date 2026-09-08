@@ -145,6 +145,9 @@ export function PeopleClient({
     [fleetVehicles, form.branchId]
   );
 
+  const canAssignVehicleForAdd = form.role !== "super_admin" && !!form.branchId;
+  const canAssignVehicleForEdit = editForm.role !== "super_admin" && !!editForm.branchId;
+
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
     return people.filter((p) => {
@@ -610,7 +613,7 @@ export function PeopleClient({
                 <Select
                   value={form.vehicleReg || "none"}
                   onValueChange={(v) => setForm({ ...form, vehicleReg: v === "none" ? "" : v })}
-                  disabled={form.role === "super_admin" || !form.branchId}
+                  disabled={!canAssignVehicleForAdd}
                 >
                   <SelectTrigger className="mt-1.5">
                     <SelectValue placeholder={form.branchId ? "Select available vehicle" : "Pick a branch first"} />
@@ -724,7 +727,7 @@ export function PeopleClient({
                 <Select
                   value={editForm.vehicleReg || "none"}
                   onValueChange={(v) => setEditForm({ ...editForm, vehicleReg: v === "none" ? "" : v })}
-                  disabled={editForm.role === "super_admin" || !editForm.branchId}
+                  disabled={!canAssignVehicleForEdit}
                 >
                   <SelectTrigger className="mt-1.5">
                     <SelectValue placeholder={editForm.branchId ? "Select available vehicle" : "Pick a branch first"} />
