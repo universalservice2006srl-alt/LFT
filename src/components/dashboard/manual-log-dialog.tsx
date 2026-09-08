@@ -5,6 +5,7 @@ import {
   AlertTriangle,
   CarFront,
   Check,
+  CalendarClock,
   Fuel,
   Loader2,
   UserRoundCog,
@@ -42,6 +43,11 @@ type DriverOpt = {
   plates: string[];
 };
 
+function localDateTimeValue(date = new Date()) {
+  const offset = date.getTimezoneOffset() * 60000;
+  return new Date(date.getTime() - offset).toISOString().slice(0, 16);
+}
+
 export function ManualLogDialog({
   user,
   open,
@@ -60,6 +66,7 @@ export function ManualLogDialog({
   const [driverId, setDriverId] = useState("");
   const [vehicleId, setVehicleId] = useState("");
   const [entryType, setEntryType] = useState("morning");
+  const [createdAt, setCreatedAt] = useState(localDateTimeValue());
   const [odo, setOdo] = useState("");
   const [purpose, setPurpose] = useState("");
   const [note, setNote] = useState("");
@@ -111,6 +118,7 @@ export function ManualLogDialog({
     setDriverId("");
     setVehicleId("");
     setEntryType("morning");
+    setCreatedAt(localDateTimeValue());
     setOdo("");
     setPurpose("");
     setNote("");
@@ -131,6 +139,7 @@ export function ManualLogDialog({
           driverId,
           vehicleId,
           entryType,
+          createdAt: new Date(createdAt).toISOString(),
           odometerValue: Number(odo),
           tripPurpose: isTemporary ? purpose : null,
           note: note || null,
@@ -283,6 +292,18 @@ export function ManualLogDialog({
                   className="mt-1.5 font-mono font-bold"
                 />
               </div>
+            </div>
+
+            <div>
+              <Label className="flex items-center gap-1"><CalendarClock className="h-3 w-3" /> Date and time *</Label>
+              <Input
+                type="datetime-local"
+                value={createdAt}
+                max={localDateTimeValue()}
+                onChange={(e) => setCreatedAt(e.target.value)}
+                className="mt-1.5"
+              />
+              <p className="mt-1 text-[11px] text-ink-soft">Use the time the missed log actually occurred.</p>
             </div>
 
             {entryType === "refuel" && (

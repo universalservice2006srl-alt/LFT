@@ -38,6 +38,7 @@ export async function POST(request: NextRequest) {
     const entryType = String(body.entryType ?? "");
     const odometerValue = Math.round(Number(body.odometerValue));
     const tripPurpose = body.tripPurpose ? String(body.tripPurpose) : null;
+    const requestedCreatedAt = body.createdAt ? String(body.createdAt) : null;
     // Photo capture is currently switched off — ignore any inbound image data.
     const photoUrl = FEATURES.photoCapture && body.photoUrl ? String(body.photoUrl) : null;
     const note = body.note ? String(body.note).slice(0, 500) : null;
@@ -49,6 +50,23 @@ export async function POST(request: NextRequest) {
     }
     if (!Number.isFinite(odometerValue) || odometerValue <= 0 || odometerValue > 2_000_000) {
       return NextResponse.json({ error: "Enter a valid odometer reading" }, { status: 400 });
+    }
+
+    let createdAt: Date | undefined;
+    if (requestedCreatedAt) {
+      if (user.role === "driver") {
+        return NextResponse.json(
+          { error: "Drivers cannot choose the entry date and time" },
+          { status: 403 }
+        );
+      }
+      createdAt = new Date(requestedCreatedAt);
+      if (!Number.isFinite(createdAt.getTime())) {
+        return NextResponse.json({ error: "Enter a valid entry date and time" }, { status: 400 });
+      }
+      if (createdAt.getTime() > Date.now()) {
+        return NextResponse.json({ error: "Entry date and time cannot be in the future" }, { status: 400 });
+      }
     }
 
     const vRows = await db.select().from(vehicles).where(eq(vehicles.id, vehicleId)).limit(1);
@@ -67,7 +85,11 @@ export async function POST(request: NextRequest) {
     let driverId = user.id;
     let onBehalf: { name: string } | null = null;
 
-    if (requestedDriverId && requestedDriverId !== user.id) {
+    if (user.role !== "driver" && !requestedDriverId) {
+      return NextResponse.json({ error: "Select a driver for this entry" }, { status: 400 });
+    }
+
+    if (requestedDriverId && (user.role !== "driver" || requestedDriverId !== user.id)) {
       if (user.role === "driver") {
         return NextResponse.json(
           { error: "Drivers can only submit their own entries" },
@@ -81,8 +103,8 @@ export async function POST(request: NextRequest) {
         .limit(1);
       const driver = dRows[0];
       if (!driver) return NextResponse.json({ error: "Driver not found" }, { status: 404 });
-      if (driver.role !== "driver" || !driver.isActive) {
-        return NextResponse.json({ error: "That profile is not an active driver" }, { status: 400 });
+      if (!driver.isActive || driver.role !== "driver") {
+        return NextResponse.json({ error: "Select an active driver" }, { status: 400 });
       }
 
       if (user.role === "branch_manager") {
@@ -178,6 +200,7 @@ export async function POST(request: NextRequest) {
           ]
             .filter(Boolean)
             .join(" ") || null,
+          ...(createdAt ? { createdAt } : {}),
       })
       .returning();
 
