@@ -25,22 +25,28 @@ import { authFetch } from "@/lib/session-client";
 
 export type DemoHint = { role: string; email: string; password: string | null };
 
-const MARQUEE = [
-  "8 branch offices",
-  "48 fleet vehicles",
-  "53 active users",
-  "6,000+ mileage logs",
-  "Live fuel analytics",
-  "Temporary-driver auditing",
-];
+type LoginStats = {
+  branches: number;
+  vehicles: number;
+  activeUsers: number;
+  logs: number;
+};
 
-export function LoginScreen({ demo }: { demo: DemoHint[] }) {
+export function LoginScreen({ demo, stats }: { demo: DemoHint[]; stats: LoginStats }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [launching, setLaunching] = useState<string | null>(null);
+  const marquee = [
+    `${stats.branches} branch offices`,
+    `${stats.vehicles} fleet vehicles`,
+    `${stats.activeUsers} active users`,
+    `${stats.logs.toLocaleString()} mileage logs`,
+    "Live fleet analytics",
+    "Temporary-driver auditing",
+  ];
 
   async function signIn(e?: React.FormEvent) {
     e?.preventDefault();
@@ -72,9 +78,9 @@ export function LoginScreen({ demo }: { demo: DemoHint[] }) {
   }
 
   return (
-    <div className="min-h-dvh bg-cream lg:grid lg:h-dvh lg:grid-cols-[1.05fr_1fr] lg:overflow-hidden">
+    <div className="min-h-dvh overflow-x-clip bg-cream lg:grid lg:h-dvh lg:grid-cols-[1.05fr_1fr]">
       {/* ---------------------------- Brand panel ---------------------------- */}
-      <section className="relative flex flex-col overflow-hidden bg-navy text-cream lg:min-h-0">
+      <section className="relative flex min-h-[32rem] flex-col overflow-hidden bg-navy text-cream lg:max-h-dvh lg:min-h-0 lg:overflow-y-auto">
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.35]"
           style={{
@@ -168,7 +174,7 @@ export function LoginScreen({ demo }: { demo: DemoHint[] }) {
 
         <div className="relative z-10 hidden overflow-hidden border-t border-cream/10 py-4 sm:block">
           <div className="flex w-max animate-marquee items-center gap-8 whitespace-nowrap">
-            {[...MARQUEE, ...MARQUEE].map((m, i) => (
+            {[...marquee, ...marquee].map((m, i) => (
               <span key={i} className="flex items-center gap-3 text-[13px] font-medium text-cream/55">
                 <Route className="h-4 w-4 text-green" />
                 {m}
@@ -179,8 +185,8 @@ export function LoginScreen({ demo }: { demo: DemoHint[] }) {
       </section>
 
       {/* ---------------------------- Sign-in panel ---------------------------- */}
-      <section className="min-h-0 overflow-y-auto bg-white">
-        <div className="mx-auto flex w-full max-w-md flex-col justify-start px-4 py-6 sm:px-6 sm:py-8 lg:min-h-full lg:justify-center lg:py-8">
+      <section className="min-h-0 overflow-y-auto bg-white lg:max-h-dvh">
+        <div className="mx-auto flex w-full max-w-md flex-col justify-start px-4 py-6 sm:px-6 sm:py-8 lg:min-h-full lg:justify-center lg:py-6">
           <Image
             src="/images/fleet_logo1.png"
             alt="Lyca Fleet Tracker"
